@@ -39,7 +39,7 @@
   .header-left { display: flex; align-items: center; gap: 10px; }
   .header-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
   .header-title { font-size: 15px; font-weight: 500; letter-spacing: -0.01em; }
-  .header-phase { font-size: 11px; color: var(--accent); background: var(--accent-dim); padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+  .header-phase { font-size: 11px; color: var(--accent); background: var(--accent-dim); padding: 3px 8px; border-radius: 20px; font-weight: 500; cursor: pointer; }
   .header-right { display: flex; gap: 8px; }
   .icon-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 0.5px solid var(--border); background: transparent; color: var(--text2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: background 0.15s, color 0.15s; }
   .icon-btn:active { background: var(--surface2); color: var(--text); }
@@ -58,6 +58,7 @@
   .bubble ul { padding-left: 16px; margin: 6px 0; }
   .bubble li { margin: 3px 0; }
   .bubble p { margin: 4px 0; }
+  .bubble .section-title { font-weight: 600; color: #fff; margin: 8px 0 2px; font-size: 14px; }
 
   /* Typing indicator */
   .typing { display: flex; align-items: center; gap: 5px; padding: 10px 13px; }
@@ -121,8 +122,9 @@
   .clear-btn { width: 100%; margin-top: 8px; background: transparent; border: 0.5px solid var(--border); color: var(--red); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
   .form-group { margin-bottom: 16px; }
   .form-group label { display: block; font-size: 12px; color: var(--text2); margin-bottom: 6px; }
-  .form-group input { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; }
+  .form-group input, .form-group select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; }
   .primary-btn { width: 100%; background: var(--accent); border: none; color: white; padding: 12px; border-radius: var(--radius-sm); font-weight: 500; cursor: pointer; font-size: 14px; }
+  .secondary-btn { width: 100%; margin-top: 8px; background: transparent; border: 0.5px solid var(--border); color: var(--text2); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -133,7 +135,7 @@
     <span class="header-title">Performance Director</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
-    <span class="header-phase" id="phase-badge">Fase 2</span>
+    <span class="header-phase" id="phase-badge" onclick="toggleSettings()">Fase 2</span>
     <div class="header-right">
       <button class="icon-btn" onclick="toggleKnowledge()" title="Base de Conocimientos">📖</button>
       <button class="icon-btn" onclick="toggleSettings()" title="Ajustes">⚙️</button>
@@ -191,7 +193,7 @@
     <button class="icon-btn" onclick="toggleKnowledge()">✕</button>
   </div>
   <div class="panel-body">
-    
+
     <h3>⚠️ Reglas de Oro</h3>
     <ul>
       <li><strong>Nada de colgarse:</strong> Protege el supraespinoso y labrum.</li>
@@ -201,7 +203,7 @@
     </ul>
 
     <h3>📚 Biblioteca de Protocolos (Documentos)</h3>
-    
+
     <details>
       <summary>Doc 1: Biomecánica y Natación</summary>
       <div class="details-content">
@@ -233,16 +235,16 @@
     - Sentadilla Búlgara: 16kg, pie en pelota. 4x8-10.<br>
     - PM a 1 pierna: 16kg cruzado. 4x8.<br>
     - Puente de Glúteo a 1 pierna: 3x12.</p>
-    
+
     <p><strong>Día 2: Metcon & Calistenia (Parque)</strong><br>
     - Sprints: 50m al 90%, volver caminando. x8-10.<br>
     - Box Jumps: Banco de parque. 5x5 saltos.<br>
     - Pistol Squats asisitidas: 3 al fallo/pierna.</p>
-    
+
     <p><strong>Día 3: Descanso Activo</strong><br>
     - Caminata rápida: 30-40 min.<br>
     - Macrodosis de Movilidad (Ver Doc 3).</p>
-    
+
     <p><strong>Día 4: Core de Gimnasta (Casa)</strong><br>
     - Suitcase Carry: 16kg. 4x45s/brazo.<br>
     - Hollow Body Hold: 4x30-45s.<br>
@@ -262,7 +264,18 @@
       <input type="password" id="api-key-input" placeholder="AIzaSy...">
       <small style="color:var(--text3); font-size:11px; display:block; margin-top:4px;">Tu clave se guarda solo en tu navegador.</small>
     </div>
+    <div class="form-group">
+      <label>Fase de rehabilitación actual</label>
+      <select id="phase-select">
+        <option value="Fase 1 (Protección)">Fase 1 — Protección</option>
+        <option value="Fase 2 (Rebuilding)">Fase 2 — Rebuilding</option>
+        <option value="Fase 3 (Vuelta al agua)">Fase 3 — Vuelta al agua</option>
+        <option value="Fase 4 (Performance)">Fase 4 — Performance</option>
+      </select>
+      <small style="color:var(--text3); font-size:11px; display:block; margin-top:4px;">El coach usa este dato como contexto. Cambialo solo cuando se cumplan los criterios de transición.</small>
+    </div>
     <button class="primary-btn" onclick="saveSettings()">Guardar Ajustes</button>
+    <button class="secondary-btn" onclick="clearConversation()">Borrar historial de conversación</button>
   </div>
 </div>
 
@@ -278,57 +291,116 @@
 </div>
 
 <script>
-const SYSTEM_PROMPT = `ROLE
-You are an elite Performance Director — a hybrid sports physiotherapist and high-performance physical trainer. You operate at the level of a professional athlete's support team: evidence-based, direct, and longitudinal. 
-
-ATHLETE PROFILE
-Age: 34 years | Weight: ~66 kg | Height: ~1.60 m
-Work: fully remote, prolonged seated periods
-Primary sport: recreational swimming
-Behavioral profile: ADHD. High motivation when progress is visible. Hyperfocus tendency → high risk of overtraining. Responds best to clear structure and concrete plans. Consistency over intensity.
-
-CLINICAL STATUS & RULES
-Working hypothesis: suspected left AC joint irritation / subacromial involvement following a traction-hyperflexion mechanism.
-Current Phase: PHASE 2 (Rebuilding).
-Strict Rules:
-- NO hanging or pull-ups (protects supraespinatus and labrum).
-- NO dips or deep push-ups (protects AC joint).
-- NO cross-body adduction under load.
-- Compact arm swing while running/sprinting. No overhead arm throwing.
-- Any sharp joint pain = immediate exercise modification.
-
-KNOWLEDGE BASE (INTERNAL REFERENCE DOCUMENTS)
-Doc 1: Biomechanics of Upper Crossed Syndrome & Swimming: Pectoralis minor shortening pulls scapula into anterior tilt, inhibiting lower trap & serratus anterior. In freestyle swimming, this causes subacromial impingement during the recovery phase and prevents a clean body roll.
-Doc 2: Dryland Progressions: Pallof press prevents unwanted rotation (stabilizes pelvis in water). Hollow body teaches the flat lumbar hydrodynamic line. Single leg RDLs and Glute bridges generate hip-driven kicking power rather than knee-driven power.
-Doc 3: Myofascial Protocols: Lacrosse ball on pec minor/latissimus against wall, active arm movement to release trigger points. Foam roller for thoracic extension: roller under scapulae, hug shoulders to protract, extend upper back without breaking neutral lumbar spine.
-
-CURRENT TRAINING PROGRAM (THE PLAN)
-DAY 1: Leg Power & Chains (At Home). Bulgarian Split Squat (16kg, foot on pilates ball 4x8-10). Single Leg RDL (16kg 4x8). Single Leg Glute Bridge (foot on ball 3x12).
-DAY 2: Metcon & Calisthenics (At Park). Sprints (50m x8-10). Box Jumps (5x5). Assisted Pistol Squats (3x failure).
-DAY 3: Active Rest & Mobility. Walk/Jog. Mobility macro-dosing based on Doc 3.
-DAY 4: Gymnast Core (At Home). Suitcase Carry (16kg 4x45s). Hollow Body (4x 30-45s). Pallof Press (4x10).
-
-INTERACTION RULES:
-- If they ask "¿Qué entreno hoy?": Give them the next day in the sequence. Present it clearly.
-- If they ask biomechanical questions (e.g. why Pallof press? how to use foam roller?): Answer strictly using the KNOWLEDGE BASE documents.
-Keep responses concise, structural, and actionable. Communicate in Spanish.`;
+/* ============================================================
+   SYSTEM PROMPT COMPLETO — los 6 modos + modelo de fases +
+   escala de dolor + readiness + jerarquía de decisión +
+   INTEGRIDAD DE DATOS + reglas de progresión + base de conocimiento
+   ============================================================ */
+const SYSTEM_PROMPT = [
+"ROLE",
+"You are an elite Performance Director: a hybrid sports physiotherapist and high-performance physical trainer operating at the level of a professional athlete's support team. Evidence-based, direct, longitudinal. You do NOT issue medical diagnoses; you work with clinical hypotheses that update based on symptoms, recovery trends and functional tolerance.",
+"",
+"ATHLETE PROFILE",
+"Age 34, ~66 kg, ~1.60 m. Fully remote work, prolonged sitting. Primary sport: recreational swimming. Goal: return to consistent swimming with excellent scapular mechanics and no relapses.",
+"Behavioral profile: ADHD (pharmacologically managed). High motivation when progress is visible. HYPERFOCUS tendency, so high risk of overtraining when symptoms improve. Responds best to clear structure and concrete plans. Values biomechanical, evidence-based rationale. Consistency over intensity.",
+"Equipment: resistance bands with door anchor, foam roller, lacrosse ball, pilates ball, 16 kg kettlebell, outdoor calisthenics park, running track.",
+"",
+"CLINICAL STATUS",
+"Working hypothesis: suspected LEFT AC joint irritation and/or subacromial involvement after a traction-hyperflexion mechanism. NOT a confirmed diagnosis. All decisions based on symptom behavior, movement tolerance, irritability and recovery trends.",
+"PERMANENT restrictions: avoid cross-body adduction under load; avoid aggressive overhead loading; avoid dips and hanging; never force painful ranges; compact arm swing when running; the cross-body deltoid stretch with forced horizontal adduction is PERMANENTLY removed (replaced by side-lying thoracic rotation). Any sharp joint pain = immediate exercise modification.",
+"Rehab priorities in order: 1) reduce irritability 2) restore scapular mechanics 3) thoracic mobility 4) posture 5) gradual return to swimming.",
+"",
+"RECOVERY PHASE MODEL (always state the current phase before recommending training)",
+"PHASE 1 PROTECTION: pain >5/10 or pain in daily activities or new flare. Allowed: walking, lower-body strength, core, thoracic mobility, pain-free rehab. Not allowed: swimming, overhead load, hanging, dips, painful push-ups.",
+"PHASE 2 REBUILDING: pain 2-4/10, stable symptoms, improved daily function. Allowed: band work, serratus activation, controlled shoulder strengthening, lower-body progression.",
+"PHASE 3 RETURN TO SWIM: pain 0-2/10, no pain in rehab, full daily function. Rule: technique before volume, volume before intensity. Never reverse.",
+"PHASE 4 PERFORMANCE: pain-free and stable for weeks. Maintain shoulder monitoring, mobility and active breaks.",
+"The athlete's CURRENT registered phase is provided in the LONGITUDINAL MEMORY block below. Use it. Only propose a phase change if the explicit criteria are met, and say so clearly.",
+"",
+"PAIN SCALE: 0-2 acceptable, continue, progression possible. 3-5 caution, maintain or reduce load, no progression, emphasize mobility. 6+ recovery day, remove aggravating exercises.",
+"RED FLAGS (reduce load immediately): sharp joint pain mid-session, pain rising fast during exercise, pain persisting >24h, ROM dropping, worsening night pain.",
+"",
+"READINESS (use ALL signals: sleep, energy, pain, stress, recent workload, irritability, recovery quality. Pain and energy ALONE are never enough).",
+"GREEN: stable symptoms, adequate recovery, progression possible. YELLOW: moderate fatigue OR increased symptoms OR recovery strain, limit progression. RED: flare OR poor recovery OR high irritability, recovery-focused.",
+"",
+"COACHING RULES",
+"When ADHD / low motivation appears: prioritize action over reflection, prescribe movement immediately.",
+"When symptoms improve: do NOT increase load opportunistically. This athlete has a documented tendency to overdo it. This is a STRUCTURAL rule, not a per-session judgment.",
+"When sleep <7h: reduce total workload, keep movement quality only.",
+"When shoulder symptoms increase: prioritize rehab and thoracic mobility, pivot to lower body.",
+"Progression: NEVER increase volume, intensity and frequency at the same time. Only ONE variable may rise at a time, justified by symptom stability + recovery quality + movement quality + trend data. Under uncertainty, choose the conservative option.",
+"Decision hierarchy (evaluate in order): 1 Safety 2 Symptom irritability 3 Recovery status 4 Recovery phase 5 Readiness 6 Training prescription 7 Performance. Training goals NEVER override safety.",
+"",
+"DATA INTEGRITY (CRITICAL). NEVER fabricate pain scores, sleep, energy, stress, recovery percentages, training volume, readiness scores or trend charts. If data is missing: 1) use the LONGITUDINAL MEMORY block if present and cite it explicitly (e.g. 'segun tus ultimas 3 sesiones registradas') 2) otherwise state clearly the value is unknown 3) ask ONLY the minimum necessary 4) never present an estimate as a fact. Do not claim a trend unless at least 5 real entries exist in memory. Daily check-in values (today's pain, sleep, energy) are intentionally NOT stored; ask for them when needed for planning or readiness, they vary day to day.",
+"",
+"INTERACTION MODES (detect from free natural language, do not require a form)",
+"MODE 1 ACTIVE BREAK (triggers: pausa activa, llevo X horas sentado/a, el cuello, me duele la espalda, necesito moverme, no puedo enfocarme). No check-in, no log needed. Reply immediately with a 2-10 min session doable in a home office, no clothes change, must not aggravate the shoulder. Format: Objetivo -> Duracion -> Ejercicios (reps o tiempo) -> Beneficio esperado -> Que hacer al volver. Short, 5-8 lines max.",
+"MODE 2 TRAINING PLANNING (triggers: que entreno hoy, planifica sesion, dame rutina). Use memory + current phase + readiness. Give the next day in the 4-day sequence unless context says otherwise. Ask only critically missing info (e.g. today's pain/sleep if relevant). Complete session with sets/reps/rest.",
+"MODE 3 TRAINING LOG (triggers: hoy entrene, complete, hice esto, termine sesion). Acknowledge and log, analyze symptom response, give a brief recovery recommendation. Do NOT invent perceived-effort or metrics the athlete didn't state.",
+"MODE 4 SYMPTOM REPORT (triggers: hoy me duele, el hombro esta, despues de entrenar siento, nuevo sintoma). Assess against phase model and decision tree. Recommend a session modification (eliminate/substitute movement). Propose a phase change only if criteria are met.",
+"MODE 5 WEEKLY REVIEW (triggers: analiza la semana, como va el progreso, estoy subentrenando, puedo subir carga). Review memory, assess adherence and load balance, recommend progression or regression, flag overtraining risk. No charts unless 5+ real entries exist.",
+"MODE 6 CONVERSATIONAL: everything else. Extract useful info naturally, no forced format. Biomechanical questions are answered strictly from the KNOWLEDGE BASE below.",
+"",
+"KNOWLEDGE BASE (use ONLY this for biomechanical reasoning)",
+"Doc 1 Upper Crossed Syndrome & swimming: pectoralis minor shortening pulls scapula into anterior tilt, inhibiting lower trap and serratus anterior; in freestyle this causes subacromial impingement during recovery phase and blocks clean body roll.",
+"Doc 2 Dryland: Pallof press = anti-rotation, stabilizes pelvis so legs don't sway in water. Hollow body = flat lumbar hydrodynamic line. Single-leg RDL and glute bridges = hip-driven kick power, not knee-driven.",
+"Doc 3 Myofascial: lacrosse ball on pec minor / lat against wall with active arm movement to release trigger points. Foam roller thoracic extension: roller under scapulae, hug shoulders to protract, extend upper back without breaking neutral lumbar.",
+"",
+"CURRENT 4-DAY PROGRAM",
+"DAY 1 Leg Power & Chains (home): Bulgarian split squat 16kg foot on pilates ball 4x8-10; single-leg RDL 16kg 4x8; single-leg glute bridge foot on ball 3x12.",
+"DAY 2 Metcon & Calisthenics (park): sprints 50m x8-10 walk back; box jumps 5x5; assisted pistol squats 3x to failure.",
+"DAY 3 Active Rest & Mobility: walk/jog 30-40 min; mobility macro-dosing per Doc 3.",
+"DAY 4 Gymnast Core (home): suitcase carry 16kg 4x45s/side; hollow body 4x30-45s; Pallof press 4x10/side.",
+"",
+"OUTPUT: match length to the request. Active break = short. Plan = full session. Weekly review = structured. Symptom = clinical reasoning + adjusted plan. Casual = brief. Never dump a full dashboard for a quick request. Always answer the immediate question first. Always respond in SPANISH, direct and technical, using rehab/exercise-prescription terminology."
+].join("\n");
 
 let conversationHistory = [];
 let sessionLog = [];
 let isLoading = false;
 
+/* ---------- Persistencia ---------- */
 function loadData() {
   try {
     const savedLog = localStorage.getItem('session-log');
-    if (savedLog) { sessionLog = JSON.parse(savedLog); renderLog(); }
+    if (savedLog) { sessionLog = JSON.parse(savedLog); }
   } catch(e) { sessionLog = []; }
+  renderLog();
+
+  try {
+    const savedConv = localStorage.getItem('conversation-history');
+    if (savedConv) {
+      conversationHistory = JSON.parse(savedConv);
+      restoreConversation();
+    }
+  } catch(e) { conversationHistory = []; }
+
+  // Fase
+  const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
+  updatePhaseBadge(phase);
 }
 
 function saveLog() {
   try { localStorage.setItem('session-log', JSON.stringify(sessionLog)); } catch(e) {}
 }
 
-/* Panel Toggles */
+function saveConversation() {
+  try { localStorage.setItem('conversation-history', JSON.stringify(conversationHistory)); } catch(e) {}
+}
+
+function restoreConversation() {
+  if (!conversationHistory.length) return;
+  const welcome = document.getElementById('welcome');
+  if (welcome) welcome.remove();
+  conversationHistory.forEach(m => addMessage(m.role, m.content, true));
+}
+
+function updatePhaseBadge(phase) {
+  const short = phase.split('(')[0].trim(); // "Fase 2"
+  document.getElementById('phase-badge').textContent = short;
+}
+
+/* ---------- Panels ---------- */
 function toggleKnowledge() { document.getElementById('knowledge-panel').classList.toggle('open'); }
 function toggleLog() { document.getElementById('log-panel').classList.toggle('open'); }
 function toggleSettings() {
@@ -336,16 +408,30 @@ function toggleSettings() {
   panel.classList.toggle('open');
   if (panel.classList.contains('open')) {
     document.getElementById('api-key-input').value = localStorage.getItem('gemini-api-key') || '';
+    document.getElementById('phase-select').value = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
   }
 }
 
 function saveSettings() {
   const key = document.getElementById('api-key-input').value.trim();
+  const phase = document.getElementById('phase-select').value;
   localStorage.setItem('gemini-api-key', key);
+  localStorage.setItem('athlete-phase', phase);
+  updatePhaseBadge(phase);
   toggleSettings();
-  if(key) addMessage('assistant', '✅ *Ajustes guardados.* Conectado a Gemini. ¡Listo para entrenar!');
+  if(key) addMessage('assistant', '✅ *Ajustes guardados.* Conectado a Gemini, fase actual: **' + phase + '**. Listo.');
 }
 
+function clearConversation() {
+  if (!confirm('¿Borrar el historial de conversación? (El registro de sesiones se mantiene.)')) return;
+  conversationHistory = [];
+  saveConversation();
+  // limpiar burbujas
+  document.querySelectorAll('.msg').forEach(m => m.remove());
+  toggleSettings();
+}
+
+/* ---------- Log ---------- */
 function renderLog() {
   const body = document.getElementById('log-body');
   const empty = document.getElementById('log-empty');
@@ -354,17 +440,17 @@ function renderLog() {
 
   if (sessionLog.length === 0) { empty.style.display = 'block'; return; }
   empty.style.display = 'none';
-  
+
   [...sessionLog].reverse().forEach(entry => {
     const div = document.createElement('div');
     div.className = 'log-entry';
     const typeLabels = { 'training': 'Entrenamiento', 'symptom': 'Síntoma', 'active-break': 'Pausa activa' };
-    div.innerHTML = `
-      <div class="log-entry-header">
-        <span class="log-entry-type">${typeLabels[entry.type] || entry.type}</span>
-        <span class="log-entry-date">${entry.date}</span>
-      </div>
-      <div class="log-entry-content">${entry.content}</div>`;
+    div.innerHTML =
+      '<div class="log-entry-header">' +
+        '<span class="log-entry-type">' + (typeLabels[entry.type] || entry.type) + '</span>' +
+        '<span class="log-entry-date">' + entry.date + '</span>' +
+      '</div>' +
+      '<div class="log-entry-content">' + escapeHtml(entry.content) + '</div>';
     body.appendChild(div);
   });
 
@@ -382,35 +468,64 @@ function addToLog(type, content) {
   const now = new Date();
   const date = now.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   sessionLog.push({ type, content, date });
-  if (sessionLog.length > 50) sessionLog = sessionLog.slice(-50);
+  if (sessionLog.length > 80) sessionLog = sessionLog.slice(-80);
   saveLog(); renderLog();
 }
 
 function autoDetectAndLog(userMsg) {
   const lower = userMsg.toLowerCase();
-  if (/entren|complet|hice|sesión|terminé/.test(lower)) addToLog('training', userMsg.slice(0, 120));
-  else if (/duele|dolor|hombro|síntoma/.test(lower)) addToLog('symptom', userMsg.slice(0, 120));
-  else if (/pausa|cuello|sentada|espalda|enfocar/.test(lower)) addToLog('active-break', userMsg.slice(0, 80));
+  // Guardamos el mensaje completo (hasta 300 chars) para que la memoria sea útil
+  const snippet = userMsg.slice(0, 300);
+  if (/entren|complet|hice|sesi[oó]n|termin[eé]|rutina/.test(lower)) addToLog('training', snippet);
+  else if (/duele|dolor|hombro|s[ií]ntoma|molesti|punza/.test(lower)) addToLog('symptom', snippet);
+  else if (/pausa|cuello|sentad|espalda|enfocar|moverme/.test(lower)) addToLog('active-break', snippet);
 }
+
+/* ---------- MEMORIA LONGITUDINAL que SÍ llega al modelo ---------- */
+function buildMemoryContext() {
+  let ctx = "\n\n=== LONGITUDINAL MEMORY (real data only, do not invent beyond this) ===\n";
+  const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
+  ctx += "CURRENT REGISTERED PHASE: " + phase + "\n";
+
+  if (sessionLog.length === 0) {
+    ctx += "HISTORY: no entries yet. Do not reference past sessions or trends; ask for what you need.\n";
+    return ctx;
+  }
+
+  ctx += "REGISTERED HISTORY: " + sessionLog.length + " total entries. These are the ONLY real historical data points. Most recent first:\n";
+  const recent = [...sessionLog].reverse().slice(0, 25);
+  const typeLabels = { 'training':'TRAINING', 'symptom':'SYMPTOM', 'active-break':'ACTIVE_BREAK' };
+  recent.forEach(e => {
+    ctx += "- [" + e.date + "] " + (typeLabels[e.type]||e.type) + ": " + e.content + "\n";
+  });
+  if (sessionLog.length < 5) {
+    ctx += "NOTE: fewer than 5 entries; do NOT claim trends or generate charts.\n";
+  }
+  return ctx;
+}
+
+/* ---------- Formato ---------- */
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function formatAssistantText(text) {
   let html = text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
     .replace(/^#{1,3}\s(.+)$/gm, '<div class="section-title">$1</div>')
     .replace(/^[-•]\s(.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    .replace(/(<li>[\s\S]*?<\/li>\n?)+/g, m => '<ul>' + m + '</ul>')
     .replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-  if (!html.startsWith('<')) html = `<p>${html}</p>`;
+  if (!html.startsWith('<')) html = '<p>' + html + '</p>';
   return html.replace(/<p><\/p>/g, '');
 }
 
-function addMessage(role, content) {
+function addMessage(role, content, skipSave) {
   const welcome = document.getElementById('welcome');
   if (welcome) welcome.remove();
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
-  div.className = `msg ${role}`;
+  div.className = 'msg ' + role;
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
   if (role === 'user') bubble.textContent = content;
@@ -424,7 +539,7 @@ function showTyping() {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg assistant'; div.id = 'typing-indicator';
-  div.innerHTML = `<div class="bubble typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  div.innerHTML = '<div class="bubble typing"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
   msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
 }
 
@@ -433,43 +548,48 @@ function hideTyping() {
   if (t) t.remove();
 }
 
+/* ---------- API ---------- */
 async function callAPI(messages) {
   const apiKey = localStorage.getItem('gemini-api-key');
   if (!apiKey) throw new Error('API_KEY_MISSING');
-  
+
   const geminiMessages = messages.map(msg => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: msg.content }]
   }));
-  
-  // ¡ACTUALIZADO! Conectando a la versión oficial vigente (gemini-3.5-flash)
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
-  
+
+  // Memoria longitudinal inyectada en el system instruction EN CADA llamada
+  const fullSystem = SYSTEM_PROMPT + buildMemoryContext();
+
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=' + apiKey;
+
   const payload = {
-    systemInstruction: { 
-      parts: [{ text: SYSTEM_PROMPT }] 
-    },
+    systemInstruction: { parts: [{ text: fullSystem }] },
     contents: geminiMessages,
-    generationConfig: { maxOutputTokens: 1000 }
+    // 8192 deja margen para el "thinking" de Gemini 3.5 + la respuesta.
+    // Con 1000 el modelo puede gastar el presupuesto pensando y devolver vacío.
+    generationConfig: { maxOutputTokens: 8192 }
   };
-  
-  const response = await fetch(url, { 
-    method: 'POST', 
-    headers: { 'Content-Type': 'application/json' }, 
-    body: JSON.stringify(payload) 
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
   });
-  
+
   if (!response.ok) {
     const errData = await response.json().catch(()=>({}));
-    throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
+    throw new Error((errData.error && errData.error.message) || ('Error HTTP ' + response.status));
   }
-  
+
   const data = await response.json();
-  if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      return data.candidates[0].content.parts[0].text;
-  } else {
-      throw new Error("Respuesta inesperada de Gemini");
+  const cand = data.candidates && data.candidates[0];
+  if (cand && cand.content && cand.content.parts && cand.content.parts.length) {
+    return cand.content.parts.map(p => p.text || '').join('').trim();
   }
+  // Casos: bloqueo por seguridad o corte por tokens
+  if (cand && cand.finishReason === 'MAX_TOKENS') throw new Error('Respuesta cortada por límite de tokens. Probá una consulta más corta.');
+  throw new Error('Respuesta vacía de Gemini (finishReason: ' + ((cand && cand.finishReason) || 'desconocido') + ')');
 }
 
 async function sendMessage(overrideText) {
@@ -483,6 +603,7 @@ async function sendMessage(overrideText) {
 
   addMessage('user', text);
   conversationHistory.push({ role: 'user', content: text });
+  saveConversation();
 
   isLoading = true; showTyping();
 
@@ -493,11 +614,13 @@ async function sendMessage(overrideText) {
     conversationHistory.push({ role: 'assistant', content: reply });
     autoDetectAndLog(text);
     if (conversationHistory.length > 40) conversationHistory = conversationHistory.slice(-40);
+    saveConversation();
   } catch(err) {
     hideTyping();
     conversationHistory.pop();
-    if (err.message === 'API_KEY_MISSING') addMessage('assistant', '⚠️ Faltan tus credenciales. Por favor, hacé clic en el ícono de **Ajustes (⚙️)** en la parte superior y agregá tu API Key de Gemini.');
-    else addMessage('assistant', `⚠️ **Error de conexión:** ${err.message}`);
+    saveConversation();
+    if (err.message === 'API_KEY_MISSING') addMessage('assistant', '⚠️ Faltan tus credenciales. Tocá el ícono de **Ajustes (⚙️)** arriba y agregá tu API Key de Gemini.');
+    else addMessage('assistant', '⚠️ **Error de conexión:** ' + err.message);
   }
   isLoading = false; input.focus();
 }
