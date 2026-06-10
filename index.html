@@ -436,25 +436,40 @@ function hideTyping() {
 async function callAPI(messages) {
   const apiKey = localStorage.getItem('gemini-api-key');
   if (!apiKey) throw new Error('API_KEY_MISSING');
+  
   const geminiMessages = messages.map(msg => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: msg.content }]
   }));
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  
+  // ¡ACTUALIZADO! Conectando a la versión oficial vigente (gemini-3.5-flash)
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${apiKey}`;
+  
   const payload = {
-    system_instruction: { parts: { text: SYSTEM_PROMPT } },
+    systemInstruction: { 
+      parts: [{ text: SYSTEM_PROMPT }] 
+    },
     contents: geminiMessages,
     generationConfig: { maxOutputTokens: 1000 }
   };
-  const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+  
+  const response = await fetch(url, { 
+    method: 'POST', 
+    headers: { 'Content-Type': 'application/json' }, 
+    body: JSON.stringify(payload) 
+  });
+  
   if (!response.ok) {
     const errData = await response.json().catch(()=>({}));
     throw new Error(errData.error?.message || `Error HTTP ${response.status}`);
   }
+  
   const data = await response.json();
   if (data.candidates && data.candidates[0] && data.candidates[0].content) {
       return data.candidates[0].content.parts[0].text;
-  } else throw new Error("Respuesta inesperada de Gemini");
+  } else {
+      throw new Error("Respuesta inesperada de Gemini");
+  }
 }
 
 async function sendMessage(overrideText) {
