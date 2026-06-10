@@ -275,6 +275,14 @@
       <small style="color:var(--text3); font-size:11px; display:block; margin-top:4px;">El coach usa este dato como contexto. Cambialo solo cuando se cumplan los criterios de transición.</small>
     </div>
     <button class="primary-btn" onclick="saveSettings()">Guardar Ajustes</button>
+
+    <h3 style="font-size:13px; color:var(--accent); margin:24px 0 10px; text-transform:uppercase; letter-spacing:0.05em;">Respaldo de datos</h3>
+    <small style="color:var(--text3); font-size:11px; display:block; margin-bottom:10px;">Tu registro vive solo en este dispositivo. Exportá un respaldo cada tanto para no perderlo.</small>
+    <button class="secondary-btn" onclick="exportData()">⬇️ Exportar registro (JSON)</button>
+    <button class="secondary-btn" onclick="document.getElementById('import-file').click()">⬆️ Importar registro (JSON)</button>
+    <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(event)">
+
+    <h3 style="font-size:13px; color:var(--red); margin:24px 0 10px; text-transform:uppercase; letter-spacing:0.05em;">Zona de riesgo</h3>
     <button class="secondary-btn" onclick="clearConversation()">Borrar historial de conversación</button>
   </div>
 </div>
@@ -464,6 +472,57 @@ function clearLog() {
   sessionLog = []; saveLog(); renderLog();
 }
 
+/* ---------- Export / Import (respaldo sin backend) ---------- */
+function exportData() {
+  const backup = {
+    app: 'performance-director',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    phase: localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)',
+    sessionLog: sessionLog,
+    conversationHistory: conversationHistory
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'perfdirector-backup-' + stamp + '.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data || !Array.isArray(data.sessionLog)) throw new Error('Formato no válido');
+      if (!confirm('Esto reemplazará tu registro actual (' + sessionLog.length + ' entradas) por el del archivo (' + data.sessionLog.length + ' entradas). ¿Continuar?')) {
+        event.target.value = ''; return;
+      }
+      sessionLog = data.sessionLog.slice(-80);
+      saveLog(); renderLog();
+      if (Array.isArray(data.conversationHistory)) {
+        conversationHistory = data.conversationHistory.slice(-40);
+        saveConversation();
+      }
+      if (data.phase) { localStorage.setItem('athlete-phase', data.phase); updatePhaseBadge(data.phase); }
+      // Re-render conversación
+      document.querySelectorAll('.msg').forEach(m => m.remove());
+      restoreConversation();
+      toggleSettings();
+      alert('Registro importado correctamente.');
+    } catch(err) {
+      alert('No se pudo importar: ' + err.message);
+    }
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
 function addToLog(type, content) {
   const now = new Date();
   const date = now.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -549,28 +608,25 @@ function hideTyping() {
 }
 
 /* ---------- API ---------- */
-async function callAPI(messages) {
-  const apiKey = localStorage.getItem('gemini-api-key');
-  if (!apiKey) throw new Error('API_KEY_MISSING');
+// Modelo principal + respaldo. Si el principal está saturado, cae al estable.
+const MODELS = ['gemini-3.5-flash', 'gemini-2.5-flash'];
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-  const geminiMessages = messages.map(msg => ({
-    role: msg.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: msg.content }]
-  }));
-
-  // Memoria longitudinal inyectada en el system instruction EN CADA llamada
-  const fullSystem = SYSTEM_PROMPT + buildMemoryContext();
-
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=' + apiKey;
-
-  const payload = {
+function buildPayload(messages, fullSystem) {
+  return {
     systemInstruction: { parts: [{ text: fullSystem }] },
-    contents: geminiMessages,
+    contents: messages.map(msg => ({
+      role: msg.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: msg.content }]
+    })),
     // 8192 deja margen para el "thinking" de Gemini 3.5 + la respuesta.
-    // Con 1000 el modelo puede gastar el presupuesto pensando y devolver vacío.
     generationConfig: { maxOutputTokens: 8192 }
   };
+}
 
+// Una sola llamada a un modelo concreto. Lanza error con .retryable si conviene reintentar.
+async function callModel(model, payload, apiKey) {
+  const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + apiKey;
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -579,7 +635,11 @@ async function callAPI(messages) {
 
   if (!response.ok) {
     const errData = await response.json().catch(()=>({}));
-    throw new Error((errData.error && errData.error.message) || ('Error HTTP ' + response.status));
+    const msg = (errData.error && errData.error.message) || ('Error HTTP ' + response.status);
+    const e = new Error(msg);
+    // 429 = rate limit, 500/503 = saturación o caída temporal -> reintentables
+    e.retryable = [429, 500, 503].includes(response.status);
+    throw e;
   }
 
   const data = await response.json();
@@ -587,9 +647,35 @@ async function callAPI(messages) {
   if (cand && cand.content && cand.content.parts && cand.content.parts.length) {
     return cand.content.parts.map(p => p.text || '').join('').trim();
   }
-  // Casos: bloqueo por seguridad o corte por tokens
   if (cand && cand.finishReason === 'MAX_TOKENS') throw new Error('Respuesta cortada por límite de tokens. Probá una consulta más corta.');
   throw new Error('Respuesta vacía de Gemini (finishReason: ' + ((cand && cand.finishReason) || 'desconocido') + ')');
+}
+
+async function callAPI(messages) {
+  const apiKey = localStorage.getItem('gemini-api-key');
+  if (!apiKey) throw new Error('API_KEY_MISSING');
+
+  const fullSystem = SYSTEM_PROMPT + buildMemoryContext();
+  const payload = buildPayload(messages, fullSystem);
+
+  let lastErr;
+  // Por cada modelo: 3 intentos con backoff exponencial (0.8s, 1.6s, 3.2s)
+  for (const model of MODELS) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        return await callModel(model, payload, apiKey);
+      } catch (err) {
+        lastErr = err;
+        if (!err.retryable) {
+          // Error no reintentable en este modelo: pasamos al siguiente modelo directamente
+          break;
+        }
+        if (attempt < 2) await sleep(800 * Math.pow(2, attempt));
+      }
+    }
+    // Si llegamos acá, este modelo falló; probamos el de respaldo (loop sigue)
+  }
+  throw lastErr || new Error('No se pudo conectar con Gemini.');
 }
 
 async function sendMessage(overrideText) {
