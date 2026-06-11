@@ -67,7 +67,32 @@
   .typing-dot:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-5px); opacity: 1; } }
 
-  /* Welcome state */
+  /* Briefing */
+  .briefing { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 6px; flex-shrink: 0; border-bottom: 0.5px solid var(--border); }
+
+  /* Mission block — elemento dominante */
+  .mission-block { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius); padding: 13px 14px; cursor: pointer; transition: background 0.15s; position: relative; overflow: hidden; }
+  .mission-block::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); border-radius: 3px 0 0 3px; }
+  .mission-block:active { background: var(--surface2); }
+  .mission-eyebrow { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; padding-left: 2px; }
+  .mission-text { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.4; padding-left: 2px; }
+  .mission-sub { font-size: 12px; color: var(--text2); margin-top: 3px; padding-left: 2px; }
+
+  /* Status row */
+  .status-row { display: flex; gap: 7px; align-items: stretch; }
+  .status-pill { flex: 1; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; cursor: pointer; transition: background 0.15s; }
+  .status-pill:active { background: var(--surface2); }
+  .pill-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); }
+  .pill-value { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.3; }
+  .pill-value.green { color: var(--green); }
+  .pill-value.amber { color: var(--amber); }
+  .pill-value.red { color: var(--red); }
+
+  /* Escape hatch */
+  .briefing-override { background: transparent; border: none; color: var(--text3); font-size: 11px; text-align: right; cursor: pointer; padding: 2px 0 6px; width: 100%; }
+  .briefing-override:active { color: var(--text2); }
+
+  /* Welcome state (fallback sin datos) */
   .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 32px 16px; text-align: center; flex: 1; margin: auto 0; }
   .welcome-icon { font-size: 36px; margin-bottom: 4px; }
   .welcome-title { font-size: 18px; font-weight: 500; }
@@ -144,11 +169,14 @@
   </div>
 </div>
 
+<!-- BRIEFING — se renderiza desde JS con datos reales del localStorage -->
+<div id="briefing-container"></div>
+
 <div class="messages" id="messages">
   <div class="welcome" id="welcome">
     <div class="welcome-icon">🏊</div>
     <div class="welcome-title">Hola, atleta.</div>
-    <div class="welcome-sub">Tu Performance Director está listo. Usá los accesos rápidos o escribí directamente.</div>
+    <div class="welcome-sub">Primera sesión. Usá los accesos rápidos o escribí directamente para arrancar.</div>
   </div>
 </div>
 
@@ -386,6 +414,9 @@ function loadData() {
   // Fase
   const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
   updatePhaseBadge(phase);
+
+  // Briefing — después de cargar todo
+  renderBriefing();
 }
 
 function saveLog() {
@@ -434,8 +465,16 @@ function clearConversation() {
   if (!confirm('¿Borrar el historial de conversación? (El registro de sesiones se mantiene.)')) return;
   conversationHistory = [];
   saveConversation();
-  // limpiar burbujas
   document.querySelectorAll('.msg').forEach(m => m.remove());
+  // Restaurar welcome y briefing
+  const msgs = document.getElementById('messages');
+  if (!document.getElementById('welcome')) {
+    const w = document.createElement('div');
+    w.className = 'welcome'; w.id = 'welcome';
+    w.innerHTML = '<div class="welcome-icon">🏊</div><div class="welcome-title">Hola, atleta.</div><div class="welcome-sub">Primera sesión. Usá los accesos rápidos o escribí directamente para arrancar.</div>';
+    msgs.appendChild(w);
+  }
+  renderBriefing();
   toggleSettings();
 }
 
@@ -690,6 +729,9 @@ async function sendMessage(overrideText) {
   addMessage('user', text);
   conversationHistory.push({ role: 'user', content: text });
   saveConversation();
+  // Ocultar briefing en cuanto empieza la conversación
+  const bc = document.getElementById('briefing-container');
+  if (bc) bc.innerHTML = '';
 
   isLoading = true; showTyping();
 
@@ -734,6 +776,152 @@ function autoResize(el) {
 }
 
 document.getElementById('user-input').addEventListener('input', function() { autoResize(this); });
+
+/* ---------- Briefing (Mission Control) ----------
+   Solo muestra campos que tienen dato real.
+   Nada se fabrica. Si no hay dato, el campo no aparece.
+   ------------------------------------------------- */
+
+// Secuencia del programa de 4 días
+const DAY_SEQUENCE = [
+  { label: 'Día 1 · Piernas & Cadenas', detail: 'Búlgara, PM a 1 pierna, Puente de glúteo', mode: '¿Qué entreno hoy? Es Día 1 del programa: Piernas y Cadenas.' },
+  { label: 'Día 2 · Metcon & Calistenia', detail: 'Sprints, Box Jumps, Pistol Squats — parque', mode: '¿Qué entreno hoy? Es Día 2 del programa: Metcon y Calistenia en el parque.' },
+  { label: 'Día 3 · Descanso Activo', detail: 'Caminata + movilidad torácica (Doc 3)', mode: 'Necesito orientación para el Día 3: Descanso Activo y movilidad.' },
+  { label: 'Día 4 · Core de Gimnasta', detail: 'Suitcase Carry, Hollow Body, Pallof Press', mode: '¿Qué entreno hoy? Es Día 4 del programa: Core de Gimnasta.' }
+];
+
+function getNextDayIndex() {
+  // Busca el último entrenamiento registrado y devuelve el siguiente en secuencia
+  const trainingSessions = sessionLog.filter(e => e.type === 'training');
+  if (!trainingSessions.length) return 0;
+
+  const last = trainingSessions[trainingSessions.length - 1].content.toLowerCase();
+  if (last.includes('día 1') || last.includes('pierna') || last.includes('búlgara') || last.includes('bulgara')) return 1;
+  if (last.includes('día 2') || last.includes('sprint') || last.includes('metcon') || last.includes('parque')) return 2;
+  if (last.includes('día 3') || last.includes('descanso') || last.includes('movilidad') || last.includes('caminata')) return 3;
+  if (last.includes('día 4') || last.includes('core') || last.includes('hollow') || last.includes('pallof')) return 0;
+  return 0;
+}
+
+function getLastCheckIn() {
+  if (!sessionLog.length) return null;
+  const last = sessionLog[sessionLog.length - 1];
+  return last.date; // ya formateado como "10 jun, 14:30"
+}
+
+function getDaysSinceLastEntry() {
+  if (!sessionLog.length) return null;
+  // Intentamos parsear la fecha del último entry
+  // El formato guardado es toLocaleDateString es-AR: "10 jun, 14:30"
+  // Usamos la fecha del sistema vs fecha guardada de forma aproximada
+  const lastEntry = sessionLog[sessionLog.length - 1];
+  // Si el entry fue hoy, days = 0
+  const today = new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+  const entryDate = lastEntry.date.split(',')[0]; // "10 jun"
+  return today === entryDate ? 0 : null; // solo distinguimos hoy vs no-hoy
+}
+
+function getLastReadiness() {
+  // Busca en el historial de conversación si se declaró readiness recientemente
+  // Solo miramos los últimos 6 mensajes del modelo para no fabricar
+  const recent = conversationHistory.slice(-6).filter(m => m.role === 'assistant');
+  for (const m of recent) {
+    const text = m.content.toLowerCase();
+    if (text.includes('verde') || text.includes('green')) return { label: 'Verde', cls: 'green' };
+    if (text.includes('amarillo') || text.includes('yellow')) return { label: 'Amarillo', cls: 'amber' };
+    if (text.includes('rojo') || text.includes('red')) return { label: 'Rojo', cls: 'red' };
+  }
+  return null; // no declarado → el campo no aparece
+}
+
+function renderBriefing() {
+  const container = document.getElementById('briefing-container');
+  if (!container) return;
+
+  // Si hay historial de conversación activo, no mostramos el briefing
+  // (el usuario ya está en medio de una sesión)
+  if (conversationHistory.length > 0) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
+  const lastCheckIn = getLastCheckIn();
+  const daysSince = getDaysSinceLastEntry();
+  const readiness = getLastReadiness();
+  const nextDay = DAY_SEQUENCE[getNextDayIndex()];
+
+  // Construimos el HTML solo con datos reales
+  let html = '<div class="briefing">';
+
+  // — Mission block (siempre visible, es el núcleo) —
+  const missionMsg = nextDay.mode;
+  html += `
+    <div class="mission-block" onclick="sendQuick('${missionMsg.replace(/'/g, "\\'")}')">
+      <div class="mission-eyebrow">Misión de hoy</div>
+      <div class="mission-text">${nextDay.label}</div>
+      <div class="mission-sub">${nextDay.detail}</div>
+    </div>`;
+
+  // — Status row (solo campos con dato real) —
+  const pills = [];
+
+  // Fase — siempre disponible
+  const phaseShort = phase.replace('Rebuilding', 'Rebuilding').split('(')[0].trim();
+  pills.push({
+    label: 'Fase',
+    value: phaseShort,
+    cls: '',
+    action: "sendQuick('¿En qué consiste mi fase actual y qué puedo progresar?')"
+  });
+
+  // Último check-in — solo si existe
+  if (lastCheckIn) {
+    const sinceLabel = daysSince === 0 ? 'Hoy' : lastCheckIn;
+    pills.push({
+      label: 'Último registro',
+      value: sinceLabel,
+      cls: daysSince === 0 ? 'green' : '',
+      action: "sendQuick('Analiza mi última sesión registrada y dime cómo estoy progresando.')"
+    });
+  }
+
+  // Readiness — solo si fue declarado en la conversación
+  if (readiness) {
+    pills.push({
+      label: 'Readiness',
+      value: readiness.label,
+      cls: readiness.cls,
+      action: "sendQuick('¿Cuál es mi estado de readiness actual y qué implica para el entrenamiento de hoy?')"
+    });
+  }
+
+  // Restricción primaria — siempre disponible, es dato clínico estático
+  pills.push({
+    label: 'Restricción',
+    value: 'Hombro izq.',
+    cls: 'amber',
+    action: "sendQuick('Recordame las restricciones activas de mi hombro izquierdo antes de entrenar.')"
+  });
+
+  if (pills.length) {
+    html += '<div class="status-row">';
+    pills.forEach(p => {
+      html += `
+        <div class="status-pill" onclick="${p.action}">
+          <span class="pill-label">${p.label}</span>
+          <span class="pill-value ${p.cls}">${p.value}</span>
+        </div>`;
+    });
+    html += '</div>';
+  }
+
+  // — Escape hatch —
+  html += `<button class="briefing-override" onclick="sendQuick('Esto no aplica hoy. Dame orientación según cómo me siento realmente.')">Esto no aplica hoy →</button>`;
+
+  html += '</div>'; // cierra .briefing
+  container.innerHTML = html;
+}
 
 loadData();
 </script>
