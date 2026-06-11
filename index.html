@@ -150,6 +150,97 @@
   .form-group input, .form-group select { width: 100%; background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; }
   .primary-btn { width: 100%; background: var(--accent); border: none; color: white; padding: 12px; border-radius: var(--radius-sm); font-weight: 500; cursor: pointer; font-size: 14px; }
   .secondary-btn { width: 100%; margin-top: 8px; background: transparent; border: 0.5px solid var(--border); color: var(--text2); padding: 10px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer; }
+
+  /* ============================================================
+     BRIEFING V2 — Rediseño
+     ============================================================ */
+  .briefing-v2 { display: flex; flex-direction: column; gap: 9px; padding: 12px 16px 20px; }
+
+  /* Mission card */
+  .mission-card { background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius); overflow: hidden; cursor: pointer; transition: background 0.15s; }
+  .mission-card:active { background: var(--surface2); }
+  .mission-card-top { padding: 12px 14px 10px; display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 0.5px solid var(--border); position: relative; }
+  .mission-card-top::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent); }
+  .mission-card-left { flex: 1; padding-left: 6px; }
+  .mission-eyebrow2 { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 3px; }
+  .mission-title2 { font-size: 19px; font-weight: 600; color: var(--text); line-height: 1.2; }
+  .mission-sub2 { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .mission-arrow2 { color: var(--text3); font-size: 16px; padding-top: 4px; }
+  .mission-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  .mcol { padding: 9px 10px; display: flex; flex-direction: column; gap: 3px; }
+  .mcol + .mcol { border-left: 0.5px solid var(--border); }
+  .mcol-icon { font-size: 13px; margin-bottom: 1px; }
+  .mcol-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text3); }
+  .mcol-value { font-size: 11px; color: var(--text); line-height: 1.3; font-weight: 500; }
+
+  /* Metrics row */
+  .metrics-row { display: flex; gap: 6px; }
+  .mtile { flex: 1; min-width: 0; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 8px 9px; cursor: pointer; transition: background 0.15s; display: flex; flex-direction: column; gap: 2px; }
+  .mtile:active { background: var(--surface2); }
+  .mtile-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); }
+  .mtile-val { font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .mtile-val .denom { font-size: 10px; font-weight: 400; color: var(--text3); }
+  .mtile-val .unit { font-size: 10px; font-weight: 400; color: var(--text3); }
+  .mtile.empty-tile { align-items: center; justify-content: center; text-align: center; min-height: 52px; }
+  .mtile-plus { font-size: 15px; color: var(--text3); line-height: 1; }
+  .mtile-empty-lbl { font-size: 9px; color: var(--text3); line-height: 1.3; margin-top: 2px; }
+  .mtile-state { display: flex; flex-direction: column; gap: 3px; }
+  .state-row2 { display: flex; align-items: center; gap: 4px; }
+  .state-dot2 { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .state-dot2.green { background: var(--green); box-shadow: 0 0 4px var(--green); }
+  .state-dot2.amber { background: var(--amber); box-shadow: 0 0 4px var(--amber); }
+  .state-dot2.red { background: var(--red); box-shadow: 0 0 4px var(--red); }
+  .state-name2 { font-size: 12px; font-weight: 700; }
+  .state-name2.green { color: var(--green); }
+  .state-name2.amber { color: var(--amber); }
+  .state-name2.red { color: var(--red); }
+  .state-desc2 { font-size: 9px; color: var(--text3); }
+
+  /* Info row */
+  .info-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .info-tile2 { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 11px; cursor: pointer; transition: background 0.15s; }
+  .info-tile2:active { background: var(--surface2); }
+  .itile-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 4px; }
+  .itile-val { font-size: 13px; font-weight: 600; line-height: 1.2; }
+  .itile-val.blue { color: var(--accent); }
+  .itile-val.amber { color: var(--amber); }
+  .itile-sub { font-size: 10px; color: var(--text2); margin-top: 3px; line-height: 1.3; }
+
+  /* Adherence tile */
+  .adh-tile { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; }
+  .adh-tile-label { font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text3); margin-bottom: 8px; }
+  .adh-content { display: flex; align-items: center; gap: 8px; }
+  .adh-days { display: flex; gap: 4px; flex: 1; justify-content: space-between; }
+  .adh-day { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .adh-circle2 { width: 26px; height: 26px; border-radius: 50%; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--text3); }
+  .adh-circle2.done { background: var(--green); border-color: var(--green); color: #fff; }
+  .adh-circle2.today-empty { border-color: var(--amber); border-style: dashed; }
+  .adh-circle2.future-day { border-color: rgba(255,255,255,0.04); }
+  .adh-dlabel { font-size: 8px; color: var(--text3); font-weight: 500; }
+  .adh-stats { text-align: right; flex-shrink: 0; }
+  .adh-count2 { font-size: 20px; font-weight: 700; color: var(--text); line-height: 1; }
+  .adh-count2 .adh-total2 { font-size: 11px; font-weight: 400; color: var(--text3); }
+  .adh-sublabel { font-size: 9px; color: var(--text3); margin-top: 2px; }
+
+  /* Quick actions v2 */
+  .qa-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .qa-btn2 { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px; cursor: pointer; display: flex; align-items: center; gap: 9px; transition: background 0.15s, border-color 0.15s; width: 100%; }
+  .qa-btn2:active { background: var(--surface2); border-color: var(--border2); }
+  .qa-iw { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .qa-iw.blue { background: rgba(74,158,255,0.14); }
+  .qa-iw.green { background: rgba(62,207,142,0.14); }
+  .qa-iw.amber { background: rgba(245,166,35,0.14); }
+  .qa-iw.red { background: rgba(255,107,107,0.14); }
+  .qa-txt { flex: 1; text-align: left; min-width: 0; }
+  .qa-ttl { font-size: 12px; font-weight: 500; color: var(--text); }
+  .qa-sub2 { font-size: 10px; color: var(--text3); }
+  .qa-arr { color: var(--text3); font-size: 12px; flex-shrink: 0; }
+
+  /* Quick commands active (during conversation) */
+  .quick-commands-active { padding: 8px 16px 0; flex-shrink: 0; }
+
+  /* Privacy note */
+  .privacy-note { text-align: center; font-size: 10px; color: var(--text3); padding: 5px 0 3px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -180,27 +271,27 @@
   </div>
 </div>
 
-<div class="quick-commands" id="quick-commands">
-  <div class="commands-grid">
-    <button class="cmd-btn" onclick="sendQuick('¿Qué entreno hoy?')">
-      <span class="cmd-icon">🏋️</span>
-      <span class="cmd-label">Qué entreno hoy</span>
-      <span class="cmd-sub">Sesión del día</span>
+<div class="quick-commands-active" id="quick-commands">
+  <div class="qa-grid2">
+    <button class="qa-btn2" onclick="sendQuick('¿Qué entreno hoy?')">
+      <div class="qa-iw blue">💪</div>
+      <div class="qa-txt"><div class="qa-ttl">Qué entreno hoy</div><div class="qa-sub2">Plan del día</div></div>
+      <span class="qa-arr">›</span>
     </button>
-    <button class="cmd-btn" onclick="sendQuick('Necesito una pausa activa ahora')">
-      <span class="cmd-icon">⏸️</span>
-      <span class="cmd-label">Pausa activa</span>
-      <span class="cmd-sub">2–10 min ahora</span>
+    <button class="qa-btn2" onclick="sendQuick('Necesito una pausa activa ahora')">
+      <div class="qa-iw blue">⏸️</div>
+      <div class="qa-txt"><div class="qa-ttl">Pausa activa</div><div class="qa-sub2">2–10 min ahora</div></div>
+      <span class="qa-arr">›</span>
     </button>
-    <button class="cmd-btn" onclick="promptLog()">
-      <span class="cmd-icon">✅</span>
-      <span class="cmd-label">Registrar sesión</span>
-      <span class="cmd-sub">Qué hice hoy</span>
+    <button class="qa-btn2" onclick="promptLog()">
+      <div class="qa-iw green">✅</div>
+      <div class="qa-txt"><div class="qa-ttl">Registrar sesión</div><div class="qa-sub2">Qué hice hoy</div></div>
+      <span class="qa-arr">›</span>
     </button>
-    <button class="cmd-btn" onclick="sendQuick('Tengo un síntoma nuevo en el hombro. ¿Qué puedo entrenar?')">
-      <span class="cmd-icon">⚡</span>
-      <span class="cmd-label">Me duele algo</span>
-      <span class="cmd-sub">Ajustar el plan</span>
+    <button class="qa-btn2" onclick="sendQuick('Tengo un síntoma nuevo en el hombro. ¿Qué puedo entrenar?')">
+      <div class="qa-iw red">⚡</div>
+      <div class="qa-txt"><div class="qa-ttl">Me duele algo</div><div class="qa-sub2">Reportar síntoma</div></div>
+      <span class="qa-arr">›</span>
     </button>
   </div>
 </div>
@@ -213,6 +304,7 @@
     <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled>↑</button>
   </div>
 </div>
+<div class="privacy-note" id="privacy-note">🔒 Tus datos se guardan en este dispositivo. Privado y seguro.</div>
 
 <!-- PANEL: Base de Conocimientos -->
 <div class="side-panel" id="knowledge-panel">
@@ -572,11 +664,20 @@ function addToLog(type, content) {
 
 function autoDetectAndLog(userMsg) {
   const lower = userMsg.toLowerCase();
-  // Guardamos el mensaje completo (hasta 300 chars) para que la memoria sea útil
   const snippet = userMsg.slice(0, 300);
   if (/entren|complet|hice|sesi[oó]n|termin[eé]|rutina/.test(lower)) addToLog('training', snippet);
   else if (/duele|dolor|hombro|s[ií]ntoma|molesti|punza/.test(lower)) addToLog('symptom', snippet);
   else if (/pausa|cuello|sentad|espalda|enfocar|moverme/.test(lower)) addToLog('active-break', snippet);
+
+  // Captura automática de valores de check-in mencionados en el mensaje
+  const painM = lower.match(/(?:dolor[^\d]*)(\d+)\s*(?:\/\s*10)?/);
+  if (painM) { const v = parseInt(painM[1]); if (v >= 0 && v <= 10) saveDailyCheckinField('pain', v); }
+  const energyM = lower.match(/(?:energ[ií]a[^\d]*)(\d+)\s*(?:\/\s*10)?/);
+  if (energyM) { const v = parseInt(energyM[1]); if (v >= 0 && v <= 10) saveDailyCheckinField('energy', v); }
+  const sleepM = lower.match(/(?:dorm[ií][^\d]*|sue[ñn]o[^\d]*)(\d+(?:[.,]\d+)?)\s*h/);
+  if (sleepM) { const v = parseFloat(sleepM[1].replace(',','.')); if (v >= 0 && v <= 24) saveDailyCheckinField('sleep', v); }
+  const stressM = lower.match(/(?:estr[eé]s[^\d]*)(\d+)\s*(?:\/\s*10)?/);
+  if (stressM) { const v = parseInt(stressM[1]); if (v >= 0 && v <= 10) saveDailyCheckinField('stress', v); }
 }
 
 /* ---------- MEMORIA LONGITUDINAL que SÍ llega al modelo ---------- */
@@ -584,6 +685,18 @@ function buildMemoryContext() {
   let ctx = "\n\n=== LONGITUDINAL MEMORY (real data only, do not invent beyond this) ===\n";
   const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
   ctx += "CURRENT REGISTERED PHASE: " + phase + "\n";
+
+  const checkin = getDailyCheckin();
+  if (checkin) {
+    ctx += "TODAY'S CHECK-IN (declared today, real values):";
+    if (checkin.pain   !== undefined) ctx += " pain="   + checkin.pain   + "/10";
+    if (checkin.energy !== undefined) ctx += " energy=" + checkin.energy + "/10";
+    if (checkin.sleep  !== undefined) ctx += " sleep="  + checkin.sleep  + "h";
+    if (checkin.stress !== undefined) ctx += " stress=" + checkin.stress + "/10";
+    ctx += "\n";
+  } else {
+    ctx += "TODAY'S CHECK-IN: not yet recorded (ask when relevant for planning).\n";
+  }
 
   if (sessionLog.length === 0) {
     ctx += "HISTORY: no entries yet. Do not reference past sessions or trends; ask for what you need.\n";
@@ -729,9 +842,15 @@ async function sendMessage(overrideText) {
   addMessage('user', text);
   conversationHistory.push({ role: 'user', content: text });
   saveConversation();
-  // Ocultar briefing en cuanto empieza la conversación
+  // Ocultar briefing y restaurar layout de chat
   const bc = document.getElementById('briefing-container');
-  if (bc) bc.innerHTML = '';
+  if (bc) { bc.innerHTML = ''; bc.style.flex = ''; bc.style.overflowY = ''; }
+  const msgsEl = document.getElementById('messages');
+  if (msgsEl) msgsEl.style.display = '';
+  const qcEl = document.getElementById('quick-commands');
+  if (qcEl) qcEl.style.display = '';
+  const pnEl = document.getElementById('privacy-note');
+  if (pnEl) pnEl.style.display = 'none';
 
   isLoading = true; showTyping();
 
@@ -777,9 +896,70 @@ function autoResize(el) {
 
 document.getElementById('user-input').addEventListener('input', function() { autoResize(this); });
 
+/* ---------- Check-in diario ---------- */
+function getTodayDate() {
+  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+}
+
+function getDailyCheckin() {
+  try {
+    const raw = localStorage.getItem('daily-checkin');
+    if (!raw) return null;
+    const obj = JSON.parse(raw);
+    if (obj.date !== getTodayDate()) {
+      localStorage.removeItem('daily-checkin');
+      return null;
+    }
+    return obj;
+  } catch(e) { return null; }
+}
+
+function saveDailyCheckinField(field, value) {
+  const today = getTodayDate();
+  const obj = getDailyCheckin() || { date: today };
+  obj[field] = value;
+  obj.date = today;
+  try { localStorage.setItem('daily-checkin', JSON.stringify(obj)); } catch(e) {}
+  renderBriefing();
+}
+
+function getWeeklyAdherence() {
+  // Muestra siempre L-M-X-J-V-S-D de la semana actual
+  const weekLabels = ['L','M','X','J','V','S','D'];
+  const today = new Date();
+  const dow = today.getDay(); // 0=Dom, 1=Lun...
+  // Offset para llegar al lunes de esta semana (si es Dom, retrocede 6 días)
+  const toMonday = dow === 0 ? -6 : 1 - dow;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + toMonday);
+  monday.setHours(0, 0, 0, 0);
+
+  const result = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const dayStr = d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+    const isToday = d.toDateString() === today.toDateString();
+    const isFuture = d > today;
+    const hasEntry = !isFuture && sessionLog.some(e => e.date.split(',')[0].trim() === dayStr.trim());
+    result.push({ dow: weekLabels[i], hasEntry, isToday, isFuture });
+  }
+  return result;
+}
+
+function captureCheckin(field) {
+  const prompts = {
+    pain:   'Quiero registrar mi nivel de dolor de hombro de hoy (escala 0-10).',
+    energy: 'Quiero registrar mi nivel de energía de hoy (escala 0-10).',
+    sleep:  'Quiero registrar cuántas horas dormí anoche.',
+    stress: 'Quiero registrar mi nivel de estrés de hoy (escala 0-10).'
+  };
+  sendQuick(prompts[field] || 'Quiero hacer mi check-in de hoy.');
+}
+
 /* ---------- Briefing (Mission Control) ----------
-   Solo muestra campos que tienen dato real.
-   Nada se fabrica. Si no hay dato, el campo no aparece.
+   Solo muestra campos con dato real del día actual.
+   Nada se fabrica. Si no hay dato, el tile es botón de captura.
    ------------------------------------------------- */
 
 // Secuencia del programa de 4 días
@@ -788,6 +968,13 @@ const DAY_SEQUENCE = [
   { label: 'Día 2 · Metcon & Calistenia', detail: 'Sprints, Box Jumps, Pistol Squats — parque', mode: '¿Qué entreno hoy? Es Día 2 del programa: Metcon y Calistenia en el parque.' },
   { label: 'Día 3 · Descanso Activo', detail: 'Caminata + movilidad torácica (Doc 3)', mode: 'Necesito orientación para el Día 3: Descanso Activo y movilidad.' },
   { label: 'Día 4 · Core de Gimnasta', detail: 'Suitcase Carry, Hollow Body, Pallof Press', mode: '¿Qué entreno hoy? Es Día 4 del programa: Core de Gimnasta.' }
+];
+
+const DAY_DETAILS = [
+  { objetivo: 'Fuerza en tren inferior sin irritar hombro.', enfoque: 'Estabilidad escapular + Control del core', evitar: 'Elevaciones sobre hombro y dips.' },
+  { objetivo: 'Cardio y potencia de salto sin carga en hombro.', enfoque: 'Cadencia, explosividad y aterrizaje', evitar: 'Movimientos dominantes de hombro.' },
+  { objetivo: 'Recuperación activa sin fatiga acumulada.', enfoque: 'Movilidad torácica y liberación fascial', evitar: 'Cargas y esfuerzo máximo.' },
+  { objetivo: 'Core de alta tensión sin involucrar hombro.', enfoque: 'Antirotación y tensión isométrica', evitar: 'Colgarse, fondos, overhead.' }
 ];
 
 function getNextDayIndex() {
@@ -836,90 +1023,188 @@ function getLastReadiness() {
 
 function renderBriefing() {
   const container = document.getElementById('briefing-container');
+  const qc = document.getElementById('quick-commands');
+  const msgs = document.getElementById('messages');
+  const pn = document.getElementById('privacy-note');
   if (!container) return;
 
-  // Si hay historial de conversación activo, no mostramos el briefing
-  // (el usuario ya está en medio de una sesión)
+  // Conversación activa: mostrar chat normal, ocultar briefing
   if (conversationHistory.length > 0) {
     container.innerHTML = '';
+    container.style.flex = '';
+    container.style.overflowY = '';
+    if (msgs) msgs.style.display = '';
+    if (qc) qc.style.display = '';
+    if (pn) pn.style.display = 'none';
     return;
   }
 
+  // Modo briefing: el container toma el espacio disponible y scrollea
+  container.style.flex = '1';
+  container.style.overflowY = 'auto';
+  if (msgs) msgs.style.display = 'none';
+  if (qc) qc.style.display = 'none';
+  if (pn) pn.style.display = '';
+
   const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
-  const lastCheckIn = getLastCheckIn();
-  const daysSince = getDaysSinceLastEntry();
+  const nextDayIdx = getNextDayIndex();
+  const nextDay = DAY_SEQUENCE[nextDayIdx];
+  const dayDetail = DAY_DETAILS[nextDayIdx];
+  const checkin = getDailyCheckin();
   const readiness = getLastReadiness();
-  const nextDay = DAY_SEQUENCE[getNextDayIndex()];
+  const adherence = getWeeklyAdherence();
+  const doneCount = adherence.filter(d => d.hasEntry).length;
 
-  // Construimos el HTML solo con datos reales
-  let html = '<div class="briefing">';
+  let html = '<div class="briefing-v2">';
 
-  // — Mission block (siempre visible, es el núcleo) —
-  const missionMsg = nextDay.mode;
-  html += `
-    <div class="mission-block" onclick="sendQuick('${missionMsg.replace(/'/g, "\\'")}')">
-      <div class="mission-eyebrow">Misión de hoy</div>
-      <div class="mission-text">${nextDay.label}</div>
-      <div class="mission-sub">${nextDay.detail}</div>
-    </div>`;
+  // ── Mission card ──
+  html += `<div class="mission-card" onclick="sendQuick('${nextDay.mode.replace(/'/g, "\\'")}')">`;
+  html += `<div class="mission-card-top">
+    <div class="mission-card-left">
+      <div class="mission-eyebrow2">MISIÓN DE HOY</div>
+      <div class="mission-title2">${nextDay.label}</div>
+      <div class="mission-sub2">${nextDay.detail}</div>
+    </div>
+    <div class="mission-arrow2">›</div>
+  </div>`;
+  html += `<div class="mission-cols">
+    <div class="mcol">
+      <div class="mcol-icon">🎯</div>
+      <div class="mcol-label">Objetivo principal</div>
+      <div class="mcol-value">${dayDetail.objetivo}</div>
+    </div>
+    <div class="mcol">
+      <div class="mcol-icon">🛡️</div>
+      <div class="mcol-label">Enfoque clave</div>
+      <div class="mcol-value">${dayDetail.enfoque}</div>
+    </div>
+    <div class="mcol">
+      <div class="mcol-icon">⚠️</div>
+      <div class="mcol-label">Evitar hoy</div>
+      <div class="mcol-value">${dayDetail.evitar}</div>
+    </div>
+  </div>`;
+  html += '</div>'; // close mission-card
 
-  // — Status row (solo campos con dato real) —
-  const pills = [];
+  // ── Metrics row ──
+  // Readiness primero (solo si fue declarado en conversación activa)
+  // Luego dolor, energía, sueño, estrés — con dato de HOY o botón de captura
+  html += '<div class="metrics-row">';
 
-  // Fase — siempre disponible
-  const phaseShort = phase.replace('Rebuilding', 'Rebuilding').split('(')[0].trim();
-  pills.push({
-    label: 'Fase',
-    value: phaseShort,
-    cls: '',
-    action: "sendQuick('¿En qué consiste mi fase actual y qué puedo progresar?')"
-  });
-
-  // Último check-in — solo si existe
-  if (lastCheckIn) {
-    const sinceLabel = daysSince === 0 ? 'Hoy' : lastCheckIn;
-    pills.push({
-      label: 'Último registro',
-      value: sinceLabel,
-      cls: daysSince === 0 ? 'green' : '',
-      action: "sendQuick('Analiza mi última sesión registrada y dime cómo estoy progresando.')"
-    });
-  }
-
-  // Readiness — solo si fue declarado en la conversación
   if (readiness) {
-    pills.push({
-      label: 'Readiness',
-      value: readiness.label,
-      cls: readiness.cls,
-      action: "sendQuick('¿Cuál es mi estado de readiness actual y qué implica para el entrenamiento de hoy?')"
-    });
+    const desc = readiness.cls === 'green' ? 'Óptimo' : readiness.cls === 'amber' ? 'Moderado' : 'Precaución';
+    html += `<div class="mtile" onclick="sendQuick('¿Qué implica mi readiness actual para entrenar hoy?')">
+      <div class="mtile-label">Estado</div>
+      <div class="mtile-state">
+        <div class="state-row2"><div class="state-dot2 ${readiness.cls}"></div><div class="state-name2 ${readiness.cls}">${readiness.label.toUpperCase()}</div></div>
+        <div class="state-desc2">${desc}</div>
+      </div>
+    </div>`;
   }
 
-  // Restricción primaria — siempre disponible, es dato clínico estático
-  pills.push({
-    label: 'Restricción',
-    value: 'Hombro izq.',
-    cls: 'amber',
-    action: "sendQuick('Recordame las restricciones activas de mi hombro izquierdo antes de entrenar.')"
+  const metrics = [
+    { key: 'pain',   label: 'Dolor Hombro', fmt: v => `${v}<span class="denom">/10</span>` },
+    { key: 'energy', label: 'Energía',       fmt: v => `${v}<span class="denom">/10</span>` },
+    { key: 'sleep',  label: 'Sueño',         fmt: v => `${v}<span class="unit"> h</span>`   },
+    { key: 'stress', label: 'Estrés',        fmt: v => `${v}<span class="denom">/10</span>` }
+  ];
+
+  metrics.forEach(m => {
+    if (checkin && checkin[m.key] !== undefined) {
+      html += `<div class="mtile" onclick="captureCheckin('${m.key}')">
+        <div class="mtile-label">${m.label}</div>
+        <div class="mtile-val">${m.fmt(checkin[m.key])}</div>
+      </div>`;
+    } else {
+      html += `<div class="mtile empty-tile" onclick="captureCheckin('${m.key}')">
+        <div class="mtile-plus">+</div>
+        <div class="mtile-empty-lbl">${m.label}</div>
+      </div>`;
+    }
   });
 
-  if (pills.length) {
-    html += '<div class="status-row">';
-    pills.forEach(p => {
-      html += `
-        <div class="status-pill" onclick="${p.action}">
-          <span class="pill-label">${p.label}</span>
-          <span class="pill-value ${p.cls}">${p.value}</span>
-        </div>`;
-    });
-    html += '</div>';
+  html += '</div>'; // close metrics-row
+
+  // ── Info row: Fase + Restricción ──
+  const phaseDesc = phase.includes('1') ? 'Protección y control del dolor' :
+                    phase.includes('2') ? 'Desarrollando fuerza y control' :
+                    phase.includes('3') ? 'Vuelta progresiva al agua' :
+                                          'Mantenimiento y rendimiento';
+  const phaseDisplay = phase.replace('(', '· ').replace(')', '');
+  html += `<div class="info-row2">
+    <div class="info-tile2" onclick="sendQuick('¿En qué consiste mi fase actual y qué puedo progresar?')">
+      <div class="itile-label">Fase actual</div>
+      <div class="itile-val blue">${phaseDisplay}</div>
+      <div class="itile-sub">${phaseDesc}</div>
+    </div>
+    <div class="info-tile2" onclick="sendQuick('Recordame las restricciones activas de mi hombro izquierdo antes de entrenar.')">
+      <div class="itile-label">Restricción principal</div>
+      <div class="itile-val amber">Hombro izquierdo</div>
+      <div class="itile-sub">Evitar overhead y carga en extensión</div>
+    </div>
+  </div>`;
+
+  // ── Adherence tile ──
+  const lastEntry = sessionLog.length > 0 ? sessionLog[sessionLog.length - 1] : null;
+  const todayStr = new Date().toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+  const lastWasToday = lastEntry && lastEntry.date.split(',')[0].trim() === todayStr.trim();
+
+  html += `<div class="adh-tile">
+    <div class="adh-tile-label">Adherencia esta semana</div>
+    <div class="adh-content">
+      <div class="adh-days">`;
+
+  adherence.forEach(d => {
+    let cls = '';
+    let content = '';
+    if (d.hasEntry)      { cls = 'done'; content = '✓'; }
+    else if (d.isToday)  { cls = 'today-empty'; }
+    else if (d.isFuture) { cls = 'future-day'; }
+    html += `<div class="adh-day">
+      <div class="adh-circle2 ${cls}">${content}</div>
+      <div class="adh-dlabel">${d.dow}</div>
+    </div>`;
+  });
+
+  html += `</div>
+      <div class="adh-stats">
+        <div class="adh-count2">${doneCount}<span class="adh-total2">/7</span></div>
+        <div class="adh-sublabel">días registrados</div>`;
+  if (lastEntry) {
+    html += `<div class="adh-sublabel" style="margin-top:3px;">${lastWasToday ? 'Hoy' : lastEntry.date.split(',')[0]}</div>`;
   }
+  html += `</div>
+    </div>
+  </div>`;
 
-  // — Escape hatch —
-  html += `<button class="briefing-override" onclick="sendQuick('Esto no aplica hoy. Dame orientación según cómo me siento realmente.')">Esto no aplica hoy →</button>`;
+  // ── Quick actions ──
+  html += `<div>
+    <div style="font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text3);margin-bottom:7px;">Accesos rápidos</div>
+    <div class="qa-grid2">
+      <button class="qa-btn2" onclick="sendQuick('¿Qué entreno hoy?')">
+        <div class="qa-iw blue">💪</div>
+        <div class="qa-txt"><div class="qa-ttl">Qué entreno hoy</div><div class="qa-sub2">Plan personalizado del día</div></div>
+        <span class="qa-arr">›</span>
+      </button>
+      <button class="qa-btn2" onclick="sendQuick('Necesito una pausa activa ahora')">
+        <div class="qa-iw blue">⏸️</div>
+        <div class="qa-txt"><div class="qa-ttl">Pausa activa</div><div class="qa-sub2">2–10 min de movilidad</div></div>
+        <span class="qa-arr">›</span>
+      </button>
+      <button class="qa-btn2" onclick="promptLog()">
+        <div class="qa-iw green">✅</div>
+        <div class="qa-txt"><div class="qa-ttl">Registrar sesión</div><div class="qa-sub2">Qué hice hoy</div></div>
+        <span class="qa-arr">›</span>
+      </button>
+      <button class="qa-btn2" onclick="sendQuick('Tengo un síntoma nuevo en el hombro. ¿Qué puedo entrenar?')">
+        <div class="qa-iw red">⚡</div>
+        <div class="qa-txt"><div class="qa-ttl">Me duele algo</div><div class="qa-sub2">Reportar síntoma / dolor</div></div>
+        <span class="qa-arr">›</span>
+      </button>
+    </div>
+  </div>`;
 
-  html += '</div>'; // cierra .briefing
+  html += '</div>'; // close briefing-v2
   container.innerHTML = html;
 }
 
