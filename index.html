@@ -241,12 +241,17 @@
 
   /* Privacy note */
   .privacy-note { text-align: center; font-size: 10px; color: var(--text3); padding: 5px 0 3px; flex-shrink: 0; }
+
+  /* Paused conversation banner */
+  .paused-banner { background: rgba(245,166,35,0.10); border: 0.5px solid rgba(245,166,35,0.28); border-radius: var(--radius-sm); padding: 9px 13px; display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--amber); line-height: 1.4; }
+  .paused-banner-icon { font-size: 14px; flex-shrink: 0; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
+    <button class="icon-btn" id="home-btn" onclick="pauseConversation()" title="Inicio" style="display:none;">🏠</button>
     <div class="header-dot" id="status-dot"></div>
     <span class="header-title">Performance Director</span>
   </div>
@@ -500,6 +505,7 @@ const SYSTEM_PROMPT = [
 let conversationHistory = [];
 let sessionLog = [];
 let isLoading = false;
+let conversationPaused = false;
 
 /* ---------- Persistencia ---------- */
 function loadData() {
@@ -543,6 +549,13 @@ function restoreConversation() {
 function updatePhaseBadge(phase) {
   const short = phase.split('(')[0].trim(); // "Fase 2"
   document.getElementById('phase-badge').textContent = short;
+}
+
+/* ---------- Inicio / Pausa de conversación ---------- */
+function pauseConversation() {
+  if (!conversationHistory.length) return;
+  conversationPaused = true;
+  renderBriefing();
 }
 
 /* ---------- Panels ---------- */
@@ -846,6 +859,7 @@ async function callAPI(messages) {
 
 async function sendMessage(overrideText) {
   if (isLoading) return;
+  conversationPaused = false; // reanudar siempre que se envíe un mensaje
   const input = document.getElementById('user-input');
   const text = (overrideText || input.value).trim();
   if (!text) return;
@@ -894,6 +908,8 @@ function sendQuick(text) {
 }
 
 function promptLog() {
+  conversationPaused = false;
+  renderBriefing(); // restaura el layout de chat si estaba pausado
   const input = document.getElementById('user-input');
   input.value = 'Hoy entrené: '; input.focus(); autoResize(input);
   document.getElementById('send-btn').disabled = false;
@@ -1040,25 +1056,29 @@ function renderBriefing() {
   const qc = document.getElementById('quick-commands');
   const msgs = document.getElementById('messages');
   const pn = document.getElementById('privacy-note');
+  const homeBtn = document.getElementById('home-btn');
   if (!container) return;
 
-  // Conversación activa: mostrar chat normal, ocultar briefing
-  if (conversationHistory.length > 0) {
+  // Conversación activa y NO pausada: mostrar chat normal, ocultar briefing
+  if (conversationHistory.length > 0 && !conversationPaused) {
     container.innerHTML = '';
     container.style.flex = '';
     container.style.overflowY = '';
     if (msgs) msgs.style.display = '';
     if (qc) qc.style.display = '';
     if (pn) pn.style.display = 'none';
+    if (homeBtn) homeBtn.style.display = ''; // visible cuando hay chat activo
     return;
   }
 
-  // Modo briefing: el container toma el espacio disponible y scrollea
+  // Modo briefing (sin conversación, o conversación pausada)
   container.style.flex = '1';
   container.style.overflowY = 'auto';
   if (msgs) msgs.style.display = 'none';
   if (qc) qc.style.display = 'none';
   if (pn) pn.style.display = '';
+  // Home btn: visible si hay conversación pausada, oculto si no hay historial
+  if (homeBtn) homeBtn.style.display = conversationHistory.length > 0 ? '' : 'none';
 
   const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
   const nextDayIdx = getNextDayIndex();
@@ -1070,6 +1090,14 @@ function renderBriefing() {
   const doneCount = adherence.filter(d => d.hasEntry).length;
 
   let html = '<div class="briefing-v2">';
+
+  // Banner de conversación pausada
+  if (conversationPaused && conversationHistory.length > 0) {
+    html += `<div class="paused-banner">
+      <span class="paused-banner-icon">⏸️</span>
+      <span>Conversación pausada — tocá cualquier acceso rápido para continuar</span>
+    </div>`;
+  }
 
   // ── Mission card ──
   html += `<div class="mission-card" onclick="sendQuick('${nextDay.mode.replace(/'/g, "\\'")}')">`;
