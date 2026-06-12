@@ -251,7 +251,7 @@
 
 <div class="header">
   <div class="header-left">
-    <button class="icon-btn" id="home-btn" onclick="pauseConversation()" title="Inicio" style="display:none;">🏠</button>
+    <button class="icon-btn" id="home-btn" onclick="pauseConversation()" title="Inicio">🏠</button>
     <div class="header-dot" id="status-dot"></div>
     <span class="header-title">Performance Director</span>
   </div>
@@ -1067,7 +1067,6 @@ function renderBriefing() {
     if (msgs) msgs.style.display = '';
     if (qc) qc.style.display = '';
     if (pn) pn.style.display = 'none';
-    if (homeBtn) homeBtn.style.display = ''; // visible cuando hay chat activo
     return;
   }
 
@@ -1077,8 +1076,6 @@ function renderBriefing() {
   if (msgs) msgs.style.display = 'none';
   if (qc) qc.style.display = 'none';
   if (pn) pn.style.display = '';
-  // Home btn: visible si hay conversación pausada, oculto si no hay historial
-  if (homeBtn) homeBtn.style.display = conversationHistory.length > 0 ? '' : 'none';
 
   const phase = localStorage.getItem('athlete-phase') || 'Fase 2 (Rebuilding)';
   const nextDayIdx = getNextDayIndex();
